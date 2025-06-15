@@ -74,3 +74,20 @@ void desactivarCepilloDerecho(){
 
 };
 
+// FUNCIONES PARA BOMBA DE AGUA 
+void activarBombaAgua(){
+  digitalWrite(BOMBA_AGUA, HIGH);
+};
+
+void desactivarBombaAgua(){
+  digitalWrite(BOMBA_AGUA, LOW);
+};
+
+// FUNCIONES PARA EL MOTOR DE SUCCION 
+void activarMotorSuccion(){
+  digitalWrite(MOTOR_SUCCION, HIGH);
+};
+
+void desactivarMotorSuccion(){
+  digitalWrite(MOTOR_SUCCION, LOW);
+};

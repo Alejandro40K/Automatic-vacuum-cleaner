@@ -15,9 +15,11 @@
 #include <Arduino.h>
 
 // PINES DEL ESP32
-#define CEPILLO_CENTRAL 5
-#define CEPILLO_IZQUIERDO 18
-#define CEPILLO_DERECHO 19
+#define MOTOR_SUCCION 4
+#define BOMBA_AGUA 16
+#define CEPILLO_CENTRAL 7
+#define CEPILLO_IZQUIERDO 5
+#define CEPILLO_DERECHO 18
 
 //FUNCIONES PARA EL SISTEMA DE RECOLECCION
 void activarCepilloCentral();
@@ -28,6 +30,12 @@ void desactivarCepilloIzquierdo();
 
 void activarCepilloDerecho();
 void desactivarCepilloDerecho();
+
+void activarBombaAgua();
+void desactivarBombaAgua();
+
+void activarMotorSuccion();
+void desactivarMotorSuccion();
 
 void iniciarRecoleccion();
 void comenzarRecoleccion();

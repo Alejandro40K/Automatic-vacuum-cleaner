@@ -9,13 +9,13 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //******************************************************************BIBLIOTECAS**********************************************************************//
-#include "Control_Reley.h"
+//#include "Control_Reley.h"
 
 //****************************************************************DEFINIMOS OBJETOS******************************************************************//
-PCF8574 pcf8574(PCF8574_ADDR);
+//PCF8574 pcf8574(PCF8574_ADDR);
 
 //**************************************************************FUNCIONES DE CONTROL*****************************************************************//
-
+/*
 // FUNCIONES DE INICIO Y PRUEBA 
 void iniciarRelevadores(){
   Wire.begin(21, 22);
@@ -37,23 +37,24 @@ void comenzarRelevadores(){
 // FUNCIONES PARA LA TURBINA DE SUCCION 
 void activarTurbinaSuccion(){
   pcf8574.write(RELE_TURBINA_SUCCION, LOW);
-  //Serial.print("turbina activado\n");
+  Serial.print("turbina activado\n");
 
 };
 
 void desactivarTurbinaSuccion(){
   pcf8574.write(RELE_TURBINA_SUCCION, HIGH);
-  //Serial.print("turbina desactivado\n");
+  Serial.print("turbina desactivado\n");
 };
 
 // FUNCIONES PARA LA BOMBA DE AGUA 
 void activarBombaAgua(){
   pcf8574.write(RELE_BOMBA_AGUA, LOW);
-  //Serial.print("bomba activado\n");
+  Serial.print("bomba activado\n");
 
 };
 
 void desactivarBombaAgua(){
   pcf8574.write(RELE_BOMBA_AGUA, HIGH);
-  //Serial.print("turbina desactivado\n");
+  Serial.print("turbina desactivado\n");
 };
+*/

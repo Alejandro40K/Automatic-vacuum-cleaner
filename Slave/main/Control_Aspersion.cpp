@@ -12,13 +12,9 @@
 
 //******************************************************************BIBLIOTECAS**********************************************************************//
 #include "Control_Aspersion.h"
-#include "Control_Reley.h"
-
-//****************************************************************DEFINIMOS OBJETOS******************************************************************//
-DHT dht(DHTPIN, DHTTYPE); 
+#include "Control_Recoleccion.h"
 
 //**************************************************************DEFINIMOS VARIABLES******************************************************************//
-float humidity = 0; 
 long tiempo;
 int distancia;
 int nueva_distancia = 0;
@@ -32,40 +28,26 @@ float porcentajeLleno = 100;
 
 // FUNCIONES DE INICIO Y PRUEBA 
 void iniciarAspersion(){
-    dht.begin();
     iniciarUltrasonico();
 }
 
 void comenzarAspersion(){
-  leerHumedad();
   leerNivelTanque();
   controlarSistemaAspersion();
 }
 
-
-// FUNCIONES SENSOR DE HUMEDAD
-void leerHumedad(){
-    humidity = dht.readHumidity();
-    if (isnan(humidity)) {
-        Serial.println("Error al leer del sensor de humedad DHT11");
-    } else {
-        Serial.println(humidity);
-    }
-}
-
 void controlarSistemaAspersion(){
-    leerHumedad();
-    if (humidity > 50 || porcentajeLleno < 10) {
+    if (porcentajeLleno < 10) {
         desactivarBombaAgua();
         Serial.println("Aspersor Apagado");
     } 
-    else if (humidity < 30) {
+    else if (porcentajeLleno > 10) {
         Serial.println("Aspersor Activado por 3 segundos");
         activarBombaAgua();
         delay(3000);  
         desactivarBombaAgua();
         Serial.println("Esperando 10 segundos antes de volver a medir");
-        delay(10000); 
+        delay(20000); 
     }
 }
 

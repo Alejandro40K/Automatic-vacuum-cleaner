@@ -9,158 +9,68 @@
 // Notas: 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 #include <WiFi.h>
-#include <WebSocketsClient.h>
 
-// Red Wi-Fi a conectar
+//*******************************************************CONFIGURACION WIFI********************************************************//
 const char* ssid = "MEGACABLE-2.4G-B2A6";
 const char* password = "tc3ZtzGG47";
 
-// IP y puerto del servidor WebSocket (tu PC)
-const char* server_ip = "192.168.100.10";  // Ajusta esta IP a la de tu computadora
-const int server_port = 8084;
+// IP del ESP32 (local) y puerto TCP
+const int serverPort = 8084;
 
-// Pines de salida para control binario
-#define DIR_OUT1 2
-#define DIR_OUT2 15
+//*******************************************************CONFIGURACION UART********************************************************//
+#define UART_TX 2   
+#define UART_RX 15  
+#define UART_BAUD 115200
 
-WebSocketsClient webSocket;
+WiFiServer server(serverPort);
+WiFiClient client;
 
-// Evento de recepción WebSocket
-void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
-  if (type == WStype_TEXT) {
-    String comando = String((char*)payload);
-    Serial.print("Comando recibido: ");
-    Serial.println(comando);
-
-    if (comando == "forward") {
-      digitalWrite(DIR_OUT1, HIGH);
-      digitalWrite(DIR_OUT2, HIGH);
-    } else if (comando == "left") {
-      digitalWrite(DIR_OUT1, HIGH);
-      digitalWrite(DIR_OUT2, LOW);
-    } else if (comando == "right") {
-      digitalWrite(DIR_OUT1, LOW);
-      digitalWrite(DIR_OUT2, HIGH);
-    } else if (comando == "stop") {
-      digitalWrite(DIR_OUT1, LOW);
-      digitalWrite(DIR_OUT2, LOW);
-    }
-
-    webSocket.sendTXT("ACK desde ESP32");
-  }
-}
-
+//*******************************************************FUNCION SETUP********************************************************//
 void setup() {
-  Serial.begin(115200);
-  pinMode(DIR_OUT1, OUTPUT);
-  pinMode(DIR_OUT2, OUTPUT);
-  digitalWrite(DIR_OUT1, LOW);
-  digitalWrite(DIR_OUT2, LOW);
+  Serial.begin(115200);  // Monitor en PC
+  Serial2.begin(UART_BAUD, SERIAL_8N1, UART_RX, UART_TX); // UART hacia esclavo
 
-  Serial.println("Iniciando conexión WiFi...");
+  // Conexión Wi-Fi
   WiFi.begin(ssid, password);
-
-  // Espera a conexión
-  unsigned long startAttemptTime = millis();
-  while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 15000) {
+  Serial.print("Conectando WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
+  Serial.println("\nWiFi conectado: " + WiFi.localIP().toString());
 
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("\nWiFi conectado");
-    Serial.println(WiFi.localIP());
-    webSocket.begin(server_ip, server_port, "/");
-    webSocket.onEvent(webSocketEvent);
-    webSocket.setReconnectInterval(5000);
-  } else {
-    Serial.println("\nNo se pudo conectar a WiFi");
-  }
+  // Iniciar servidor TCP
+  server.begin();
+  Serial.println("Servidor TCP iniciado en puerto " + String(serverPort));
 }
 
+//*******************************************************FUNCION LOOP********************************************************//
 void loop() {
-  webSocket.loop();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/// DE PRUEBA 
-/*#include <WiFi.h>
-#include <WebSocketsClient.h>
-
-const char* ssid = "MEGACABLE-2.4G-B2A6";   // SSID de wifi
-const char* password = "tc3ZtzGG47";        // Contraseña wifi
-
-const char* server_ip = "192.168.100.10";  // IP de la PC con Python
-const int server_port = 8084;
-
-WebSocketsClient webSocket;
-unsigned long lastSend = 0;
-
-void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
-  if (type == WStype_TEXT) {
-    Serial.print("Mensaje recibido de Python: ");
-    Serial.println((char*)payload);
-  }
-}
-
-void setup() {
-  Serial.begin(115200);
-  WiFi.begin(ssid, password);
-  Serial.print("Conectando a WiFi");
-
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500); Serial.print(".");
+  // Aceptar cliente
+  if (!client || !client.connected()) {
+    client = server.available();
+    if (client) {
+      Serial.println("Cliente conectado: " + client.remoteIP().toString());
+    }
   }
 
-  Serial.println("\n Conectado a WiFi");
-  Serial.println(WiFi.localIP());
+  // Leer datos del cliente y reenviar por UART
+  if (client && client.connected() && client.available()) {
+    String data = client.readStringUntil('\n'); // leer hasta salto de línea
+    data.trim();
+    if (data.length() > 0) {
+      Serial.println("Velocidades recibidas: " + data);
+      Serial2.println(data); // enviar al esclavo
+    }
+  }
 
-  webSocket.begin(server_ip, server_port, "/");
-  webSocket.onEvent(webSocketEvent);
-  webSocket.setReconnectInterval(5000);
-}
-
-void loop() {
-  webSocket.loop();
-
-  if (millis() - lastSend > 2000) {
-    webSocket.sendTXT("Hola desde ESP32");
-    Serial.println("Mensaje enviado a Python");
-    lastSend = millis();
+  // Leer datos de UART y enviar al cliente TCP
+  if (Serial2.available()) {
+    String dataFromSlave = Serial2.readStringUntil('\n');
+    dataFromSlave.trim();
+    if (client && client.connected() && dataFromSlave.length() > 0) {
+      client.println(dataFromSlave); // enviar datos medidos al cliente
+    }
   }
 }
-
-*/
-
-
-
-
-
-
-
-

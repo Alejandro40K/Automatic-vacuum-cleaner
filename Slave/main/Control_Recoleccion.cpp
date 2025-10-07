@@ -19,22 +19,15 @@ void iniciarRecoleccion(){
   pinMode(CEPILLO_CENTRAL, OUTPUT);
   pinMode(CEPILLO_IZQUIERDO, OUTPUT);
   pinMode(CEPILLO_DERECHO, OUTPUT);
+  pinMode(BOMBA_AGUA, OUTPUT);
+  pinMode(MOTOR_SUCCION, OUTPUT);
 
   digitalWrite(CEPILLO_CENTRAL, LOW);
   digitalWrite(CEPILLO_IZQUIERDO, LOW);
   digitalWrite(CEPILLO_DERECHO, LOW);
+  digitalWrite(BOMBA_AGUA, LOW);
+  digitalWrite(MOTOR_SUCCION, LOW);
 
-};
-
-void comenzarRecoleccion(){
-  activarCepilloCentral();
-  activarCepilloIzquierdo();
-  activarCepilloDerecho();
-  delay(5000);
-  desactivarCepilloCentral();
-  desactivarCepilloIzquierdo();
-  desactivarCepilloDerecho();
-  delay(5000);
 
 };
 
@@ -90,4 +83,23 @@ void activarMotorSuccion(){
 
 void desactivarMotorSuccion(){
   digitalWrite(MOTOR_SUCCION, LOW);
+};
+
+
+
+
+void activarActuadores(){
+  activarCepilloCentral();
+  activarCepilloIzquierdo();
+  activarCepilloDerecho();
+  activarMotorSuccion();
+
+};
+
+void desactivarActuadores(){
+  desactivarCepilloCentral();
+  desactivarCepilloIzquierdo();
+  desactivarCepilloDerecho();
+  desactivarMotorSuccion();
+  desactivarBombaAgua();
 };

@@ -17,7 +17,7 @@
 // PINES DEL ESP32
 #define MOTOR_SUCCION 4
 #define BOMBA_AGUA 16
-#define CEPILLO_CENTRAL 7
+#define CEPILLO_CENTRAL 17
 #define CEPILLO_IZQUIERDO 5
 #define CEPILLO_DERECHO 18
 
@@ -37,8 +37,9 @@ void desactivarBombaAgua();
 void activarMotorSuccion();
 void desactivarMotorSuccion();
 
+void activarActuadores();
+void desactivarActuadores();
 void iniciarRecoleccion();
-void comenzarRecoleccion();
 
 #endif
 
